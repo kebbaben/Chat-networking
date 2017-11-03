@@ -1,7 +1,6 @@
 #include "Client.h"
 
 
-
 Client::Client(std::string name, sf::IpAddress ip, unsigned short port)
 {
 	m_name = name;
@@ -17,17 +16,17 @@ Client::~Client()
 
 const std::string Client::GetName() const
 {
-	return std::string();
+	return m_name;
 }
 
 
 const sf::IpAddress Client::GetIp() const
 {
-	return sf::IpAddress();
+	return m_ip;
 }
 
 
 const unsigned short Client::GetPort() const
 {
-	return 0;
+	return m_port;
 }

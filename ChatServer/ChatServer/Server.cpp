@@ -17,38 +17,34 @@ Server::~Server()
 
 void Server::Update()
 {
-	// Receive a message from anyone
-
+	// Creates a thread for recieving messages
 	std::thread recieve(&Server::Recieve, this);
 	recieve.join();
 
-	//std::cout << client.back()->GetName() << " said: " << buffer << std::endl;
-
-	// Send an answer
-	//std::string message = "Welcome " + sender.toString();
-	//socket.send(message.c_str(), message.size() + 1, sender, port);
+	// The function creating a thread must be running or the thread will die
+	while (true);
 }
 
 
 void Server::Recieve()
 {
-	std::size_t received = 0;
+	std::size_t data_size = 0; // Amount of characters in buffer
 	sf::IpAddress sender;
 	unsigned short port;
 
 	while (true)
 	{
-		socket.receive(buffer, sizeof(buffer), received, sender, port);
+		socket.receive(buffer, sizeof(buffer), data_size, sender, port);
 
-		if (buffer[0] == '/')
+		if (buffer[0] == '/') // If command
 		{
 			int command_end;
 			std::string command;
 			std::string input;
 
-			for (int i = 1; i < received; i++)
+			for (int i = 1; i < data_size; i++) // For each command character
 			{
-				if (buffer[i] == ' ')
+				if (buffer[i] == ' ') // If end of command
 				{
 					command_end = i;
 					break;
@@ -56,13 +52,15 @@ void Server::Recieve()
 
 				command += buffer[i];
 			}
-			for (int i = command_end + 1; i < received; i++)
+
+			for (int i = command_end + 1; i < data_size; i++) // For each character after command
 			{
 				input += buffer[i];
 			}
-			if (buffer[1] == 'n')
+
+			if (buffer[1] == 'n') // If command is n then it's a new user
 				NewUser(input, sender, port);
-			else
+			else // Otherwise it's a normal command
 				CallFunction(command, input);
 		}
 
@@ -71,7 +69,7 @@ void Server::Recieve()
 }
 
 
-void Server::Send()
+void Server::Send() //TODO:: This is NOT a thread
 {
 	for (auto it = clients.begin(); it != clients.end(); it++)
 	{
@@ -83,11 +81,11 @@ void Server::Send()
 void Server::CallFunction(const std::string& command, const std::string& input)
 {
 	func_map::const_iterator iter;
-	iter = funcs.find(command);
+	iter = funcs.find(command); // Find function with recieved command
 	//funcs[command]();
-	if (iter != funcs.end())
+	if (iter != funcs.end()) // If function is found
 	{
-		(struct_func.*(iter->second))();
+		(func_struct.*(iter->second))(); // Calls function
 	}
 }
 
@@ -97,18 +95,19 @@ void Server::NewUser(const std::string name, const sf::IpAddress ip, const unsig
 	std::string message;
 
 	client_map::const_iterator iter;
-	iter = clients.find(name);
+	iter = clients.find(name); // Look for a client with the same name
 
-	if (iter == clients.end())
+	if (iter == clients.end()) // If name isn't already taken
 	{
+		// Creates new client anda adds it to the map
 		Client* client = new Client(name, ip, port);
 		clients.insert(std::make_pair(name, client));
 		message = "Welcome " + name + "!";
 	}
-	else
+	else // If name already is taken
 	{
 		message = "/r Name is already taken. Please use another name...";
-		
 	}
+
 	socket.send(message.c_str(), message.size() + 1, ip, port);
 }

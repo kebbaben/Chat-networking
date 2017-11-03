@@ -23,11 +23,11 @@ public:
 	~Server();
 
 	void Update();
-	void Recieve();
+	void Recieve(); // Thread
 	void Send();
 
 private:
-	typedef void(Functions::*Func)(void);
+	typedef void(Functions::*Func)(void); // Func is the name of this line
 	typedef std::map<std::string, Func> func_map;
 	typedef std::map<std::string, Client*> client_map;
 
@@ -36,10 +36,10 @@ private:
 
 	func_map funcs;
 	client_map clients;
-	Functions struct_func;
+	Functions func_struct;
 
 	sf::UdpSocket socket;
 
-	char buffer[1024];
+	char buffer[1024]; // Message
 };
 

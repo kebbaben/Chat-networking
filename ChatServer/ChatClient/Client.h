@@ -10,8 +10,8 @@ public:
 	~Client();
 
 	void Update();
-	void Recieve();
-	void Send();
+	void Recieve(); // Thread
+	void Send();	// Thread
 
 private:
 	void Start();
