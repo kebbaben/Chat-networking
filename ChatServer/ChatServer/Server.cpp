@@ -23,7 +23,10 @@ void Server::Update()
 	recieve.join();
 
 	// The function creating a thread must be running or the thread will die
-	while (true);
+	while (true)
+	{
+		//atexit(Recieve)
+	}
 }
 
 

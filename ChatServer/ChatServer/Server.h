@@ -11,11 +11,9 @@
 struct Functions
 {
 	typedef std::map<std::string, Client*> client_map;
-	//void NewUser()
-	//{
-	//	std::cout << "det funkar" << std::endl;
-	//}
 
+
+	// Sends a private message to another client
 	void Whisper(const std::string senderName, const sf::IpAddress senderIP, const unsigned short senderPort, const std::string input, client_map& clients, sf::UdpSocket& socket)
 	{
 		std::string targetName;
@@ -23,7 +21,7 @@ struct Functions
 		int nameEnd;
 
 		// If use of command is incorrect
-		if (input[0] != '<')
+		if (input[0] != '<' || input.find('>') == std::string::npos)
 		{
 			message = "False use of command. Correct usage is: /w <target username>...";
 			socket.send(message.c_str(), message.size() + 1, senderIP, senderPort);
@@ -49,13 +47,6 @@ struct Functions
 				nameEnd = i;
 				break;
 			}
-			// If use of command is incorrect
-			else
-			{
-				message = "False use of command. Correct usage is: /w <target username>...";
-				socket.send(message.c_str(), message.size() + 1, senderIP, senderPort);
-				return;
-			}
 
 			// Adds character to name
 			targetName += input[i];
@@ -67,6 +58,7 @@ struct Functions
 	}
 
 
+	// Registers a new user
 	void NewUser(const std::string name, const sf::IpAddress ip, const unsigned short port, const std::string input, client_map& clients, sf::UdpSocket& socket)
 	{
 		// If user isn't registered
@@ -91,6 +83,7 @@ struct Functions
 	}
 
 
+	// Finds out if a user with a certain name exists
 	bool FindClient(const std::string name, const client_map& clients)
 	{
 		client_map::const_iterator iter;
@@ -113,7 +106,7 @@ public:
 	~Server();
 
 	void Update();
-	void Recieve(); // Thread
+	void Recieve();
 	void Send();
 
 private:
