@@ -83,6 +83,10 @@
     <IncludePath>..\SFML-2.4.2\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\SFML-2.4.2\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>..\SFML-2.4.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\SFML-2.4.2\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

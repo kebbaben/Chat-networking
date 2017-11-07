@@ -19,8 +19,26 @@ Client::~Client()
 
 void Client::Start()
 {
-	//std::cout << "Please enter the IP-address of the server..." << std::endl;
+	/*std::string ipAddress;
+
+	while (true)
+	{
+		std::cout << "Please enter the IP-address of the server..." << std::endl;
+		std::getline(std::cin, ipAddress);
+
+		if (ipAddress[0] == NULL)
+		{
+			std::cout << "You didn't type anything" << std::endl;
+		}
+		else
+		{
+			host = ipAddress;
+			break;
+		}
+	}*/
+	
 	std::string name;
+
 	while (true)
 	{
 		std::cout << "Please enter your name..." << std::endl;
@@ -51,7 +69,7 @@ void Client::Start()
 		unsigned short port;
 
 		socket.receive(buffer, sizeof(buffer), data_size, sender, port);
-		std::cout << sender.toString() << " said: " << std::string(buffer) << std::endl;
+		std::cout << std::string(buffer) << std::endl;
 
 		if (buffer[0] != '/') // If the message isn't a command
 		{
@@ -60,7 +78,6 @@ void Client::Start()
 				break;
 			}
 		}
-		// Proceed
 	}
 }
 
@@ -89,7 +106,7 @@ void Client::Recieve()
 		unsigned short port;
 
 		socket.receive(buffer, sizeof(buffer), data_size, sender, port);
-		std::cout << sender.toString() << " said: " << std::string(buffer) << std::endl;
+		std::cout << buffer << std::endl;
 	}
 }
 
@@ -101,9 +118,9 @@ void Client::Send()
 		std::string message;
 		std::getline(std::cin, message);
 
-		if (message[0] == NULL) // Prevents clients from spamming to the server
+		if (message[0] == NULL) // Prevents clients from sending nothing to the server
 		{
-			std::cout << "fuck yo message\n";
+			std::cout << "You didn't type anything" << std::endl;
 			continue;
 		}
 

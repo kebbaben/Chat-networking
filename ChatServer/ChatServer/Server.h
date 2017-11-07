@@ -41,5 +41,7 @@ private:
 	sf::UdpSocket socket;
 
 	char buffer[1024]; // Message
+
+	bool noCommand;
 };
 
