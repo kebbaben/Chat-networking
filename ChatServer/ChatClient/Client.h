@@ -1,7 +1,8 @@
 #pragma once
-#include <SFML/Network/UdpSocket.hpp>
 #include <iostream>
-#include <thread>
+
+#include <SFML/Network/UdpSocket.hpp>
+
 
 class Client
 {
@@ -10,15 +11,15 @@ public:
 	~Client();
 
 	void Update();
-	void Recieve(); // Thread
-	void Send();	// Thread
 
 private:
-	void Start();
+	void Connect();
+	void Recieve();			// Thread
+	void Send();			// Thread
 	
-	sf::UdpSocket socket;
-	sf::IpAddress host;
-
-	unsigned short host_port;
+	sf::UdpSocket m_socket;
+	sf::IpAddress m_host_ip;
+	unsigned short m_host_port;
+	bool connected;
 };
 

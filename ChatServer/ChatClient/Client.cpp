@@ -1,14 +1,20 @@
+#include <thread>
+
 #include "Client.h"
 
 
 Client::Client()
 {
-	socket.bind(sf::Socket::AnyPort);
+	//atexit([]() { Client::Instance.Disconnect(); });
 
-	host = host.getLocalAddress();
-	host_port = 55002;
+	m_socket.bind(sf::Socket::AnyPort);
 
-	Start();
+	//host_ip = host_ip.getLocalAddress();
+	m_host_port = 55001;
+
+	connected = false;
+
+	Connect();
 }
 
 
@@ -17,25 +23,26 @@ Client::~Client()
 }
 
 
-void Client::Start()
+void Client::Connect()
 {
-	/*std::string ipAddress;
+	std::string ipAddress;
 
 	while (true)
 	{
 		std::cout << "Please enter the IP-address of the server..." << std::endl;
 		std::getline(std::cin, ipAddress);
 
-		if (ipAddress[0] == NULL)
+		// If nothing was written
+		if (ipAddress.size() <= 0) 
 		{
 			std::cout << "You didn't type anything" << std::endl;
 		}
 		else
 		{
-			host = ipAddress;
+			m_host_ip = ipAddress;
 			break;
 		}
-	}*/
+	}
 	
 	std::string name;
 
@@ -44,39 +51,38 @@ void Client::Start()
 		std::cout << "Please enter your name..." << std::endl;
 		std::getline(std::cin, name);
 
-		if (name[0] == NULL) // If nothing was written
+		// If nothing was written
+		if (name.size() <= 0) 
 		{
-			std::cout << "Maybe write something for a name?" << std::endl;
+			std::cout << "You didn't type anything" << std::endl;
 			continue;
 		}
-		else if (name[0] == ' ') // If name starts with blankspace
+		// If name starts or ends with space with blankspace
+		else if (name[0] == ' ' || name[name.size() - 1] == ' ')
 		{
-			std::cout << "Name can't begin with space" << std::endl;
-			continue;
-		}
-		else if (name[name.size() - 1]  == ' ') // If name ends with blankspace
-		{
-			std::cout << "Name can't end with space" << std::endl;
+			std::cout << "Name can't begin or end with space" << std::endl;
 			continue;
 		}
 
-		std::string message = "/n " + name; // Message = "command, name"
-		socket.send(message.c_str(), message.size() + 1, host, host_port);
+		std::string message = "/n " + name;
+		m_socket.send(message.c_str(), message.size() + 1, m_host_ip, m_host_port);
 
-		char buffer[1024]; // Message
+		// Data to be received
+		char buffer[1024];
 		std::size_t data_size = 0;
 		sf::IpAddress sender;
 		unsigned short port;
 
-		socket.receive(buffer, sizeof(buffer), data_size, sender, port);
-		std::cout << std::string(buffer) << std::endl;
+		m_socket.receive(buffer, sizeof(buffer), data_size, sender, port);
 
-		if (buffer[0] != '/') // If the message isn't a command
+		// Prints received message
+		std::cout << buffer << std::endl;
+
+		// If the requested name isn't already taken
+		if (buffer[0] != '/') 
 		{
-			if (buffer[1] != 'r') // And if the command isn't r
-			{
-				break;
-			}
+			connected = true;
+			break;
 		}
 	}
 }
@@ -84,15 +90,12 @@ void Client::Start()
 
 void Client::Update()
 {
-	// Creates two threads for sending and recieving messages
+	// Creates threads for sending and recieving messages
 	std::thread recieve(&Client::Recieve, this);
 	std::thread send(&Client::Send, this);
 
 	recieve.join();
 	send.join();
-
-	// The function creating a thread must be running or the thread will die
-	while (true);
 }
 
 
@@ -100,13 +103,19 @@ void Client::Recieve()
 {
 	while (true)
 	{
-		char buffer[1024];
-		std::size_t data_size = 0;
-		sf::IpAddress sender;
-		unsigned short port;
+		if (connected)
+		{
+			// Data to be received
+			char buffer[1024];
+			std::size_t data_size = 0;
+			sf::IpAddress sender;
+			unsigned short port;
 
-		socket.receive(buffer, sizeof(buffer), data_size, sender, port);
-		std::cout << buffer << std::endl;
+			m_socket.receive(buffer, sizeof(buffer), data_size, sender, port);
+
+			// Prints received message
+			std::cout << buffer << std::endl;
+		}
 	}
 }
 
@@ -118,12 +127,24 @@ void Client::Send()
 		std::string message;
 		std::getline(std::cin, message);
 
-		if (message[0] == NULL) // Prevents clients from sending nothing to the server
+		// Prevents clients from sending nothing to the server
+		if (message.size() <= 0) 
 		{
 			std::cout << "You didn't type anything" << std::endl;
 			continue;
 		}
 
-		socket.send(message.c_str(), message.size() + 1, host, host_port);
+		m_socket.send(message.c_str(), message.size() + 1, m_host_ip, m_host_port);
+
+		if (message == "/disconnect")
+		{
+			m_host_ip = m_host_ip.None;
+			connected = false;
+		}
+
+		if (message == "/connect" && !connected)
+		{
+			Connect();
+		}
 	}
 }
