@@ -7,6 +7,7 @@
 
 #include "Client.h"
 
+
 struct Functions
 {
 	typedef std::map<std::string, Client*> client_map;

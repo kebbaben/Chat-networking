@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#include <SFML/Network/UdpSocket.hpp>
+
 
 class Client
 {
