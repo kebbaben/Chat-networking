@@ -8,11 +8,8 @@ Client::Client()
 	//atexit([]() { Client::Instance.Disconnect(); });
 
 	m_socket.bind(sf::Socket::AnyPort);
-
-	//host_ip = host_ip.getLocalAddress();
 	m_host_port = 55001;
-
-	connected = false;
+	m_connected = false;
 
 	Connect();
 }
@@ -26,6 +23,7 @@ Client::~Client()
 void Client::Connect()
 {
 	std::string ipAddress;
+	std::string name;
 
 	while (true)
 	{
@@ -43,8 +41,6 @@ void Client::Connect()
 			break;
 		}
 	}
-	
-	std::string name;
 
 	while (true)
 	{
@@ -81,7 +77,7 @@ void Client::Connect()
 		// If the requested name isn't already taken
 		if (buffer[0] != '/') 
 		{
-			connected = true;
+			m_connected = true;
 			break;
 		}
 	}
@@ -103,7 +99,7 @@ void Client::Recieve()
 {
 	while (true)
 	{
-		if (connected)
+		if (m_connected)
 		{
 			// Data to be received
 			char buffer[1024];
@@ -139,10 +135,10 @@ void Client::Send()
 		if (message == "/disconnect")
 		{
 			m_host_ip = m_host_ip.None;
-			connected = false;
+			m_connected = false;
 		}
 
-		if (message == "/connect" && !connected)
+		if (message == "/connect" && !m_connected)
 		{
 			Connect();
 		}

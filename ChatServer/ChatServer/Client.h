@@ -19,4 +19,3 @@ private:
 	sf::IpAddress m_ip;
 	unsigned short m_port;
 };
-

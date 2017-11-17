@@ -4,7 +4,6 @@
 Server::Server()
 {
 	m_socket.bind(55001);
-	//socket.setBlocking(false);
 
 	// Inserts command functions
 	m_funcs.insert(std::make_pair("n", &Functions::NewClient));
@@ -41,7 +40,6 @@ void Server::Recieve()
 	{
 		// Resets noCommand
 		m_isCommand = false;
-
 		m_socket.receive(buffer, sizeof(buffer), data_size, senderIP, senderPort);
 
 		message = buffer;
@@ -96,6 +94,7 @@ void Server::Recieve()
 			}
 		}
 
+		// Switch senderIP to senderName to view the senders name
 		std::cout << senderIP.toString() << " said: " << buffer << std::endl;
 	}
 }

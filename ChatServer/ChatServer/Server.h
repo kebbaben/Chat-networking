@@ -13,7 +13,8 @@ struct Functions
 	typedef std::map<std::string, Client*> client_map;
 
 	// Sends a private message to another client
-	void Whisper(const std::string senderName, const sf::IpAddress senderIP, const unsigned short senderPort, const std::string input, client_map& clients, sf::UdpSocket& socket)
+	void Whisper(const std::string senderName, const sf::IpAddress senderIP, const unsigned short senderPort,
+				const std::string input, client_map& clients, sf::UdpSocket& socket)
 	{
 		std::string targetName;
 		std::string message;
@@ -52,12 +53,12 @@ struct Functions
 		}
 
 		message = senderName + " whispered: " + input.substr(nameEnd + 1, input.length());
-
 		socket.send(message.c_str(), message.size() + 1, clients[targetName]->GetIp(), clients[targetName]->GetPort());
 	}
 
 	// Registers a new client
-	void NewClient(const std::string name, const sf::IpAddress ip, const unsigned short port, const std::string input, client_map& clients, sf::UdpSocket& socket)
+	void NewClient(const std::string name, const sf::IpAddress ip, const unsigned short port,
+				const std::string input, client_map& clients, sf::UdpSocket& socket)
 	{
 		// If user isn't registered
 		if (!FindClient(name, clients))
@@ -81,7 +82,8 @@ struct Functions
 	}
 
 	// Disconnects client
-	void Disconnect(const std::string name, const sf::IpAddress ip, const unsigned short port, const std::string input, client_map& clients, sf::UdpSocket& socket)
+	void Disconnect(const std::string name, const sf::IpAddress ip, const unsigned short port,
+					const std::string input, client_map& clients, sf::UdpSocket& socket)
 	{
 		// Marks client for destruction
 		delete clients[name];
@@ -109,6 +111,7 @@ struct Functions
 	}
 };
 
+
 class Server
 {
 public:
@@ -119,7 +122,8 @@ public:
 
 private:
 	typedef std::map<std::string, Client*> client_map;
-	typedef void(Functions::*Func)(const std::string senderName, const sf::IpAddress senderIP, const unsigned short senderPort, const std::string input, client_map& clients, sf::UdpSocket& socket);
+	typedef void(Functions::*Func)(const std::string senderName, const sf::IpAddress senderIP, 
+				const unsigned short senderPort, const std::string input, client_map& clients, sf::UdpSocket& socket);
 	typedef std::map<std::string, Func> func_map;
 
 	void Recieve();
@@ -135,4 +139,3 @@ private:
 
 	bool m_isCommand;
 };
-

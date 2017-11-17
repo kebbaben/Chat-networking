@@ -20,6 +20,5 @@ private:
 	sf::UdpSocket m_socket;
 	sf::IpAddress m_host_ip;
 	unsigned short m_host_port;
-	bool connected;
+	bool m_connected;
 };
-
